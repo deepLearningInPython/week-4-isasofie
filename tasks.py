@@ -33,7 +33,7 @@ text = "The quick brown fox jumps over the lazy dog!"
 tokens = [token.strip("!").lower() for token in text.split() ]
 
 # Expected output: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog']
-print(tokens)
+# print(tokens)
 # -----------------------------------------------
 
 
@@ -45,11 +45,19 @@ print(tokens)
 
 # Your code here:
 # -----------------------------------------------
-def tokenize(string: str) -> list:
+def tokenize(string: str, sorted = False, unique = False) -> list:
     tokenized = [token.strip('.,!?;:"\'').lower() for token in string.split()]
-    return sorted(tokenized)
+    
+    if unique:
+        tokenized = set(tokenized)
+    
+    if sorted:
+        tokenized = sorted(tokenized)
+    
+    return tokenized
 
-print(tokenize("I walked A THOUSEND Miles"))
+#print(tokenize("I walked A THOUSEND Miles"))
+
 
 # -----------------------------------------------
 
@@ -80,12 +88,12 @@ print(tokenize("I walked A THOUSEND Miles"))
 word_frequencies = {word: tokens.count(word) for word in tokens}
 
 # Expected output example: {'the': 2, 'quick': 1, ...}
-print(word_frequencies)
+#print(word_frequencies)
 
 # Modify the comprehension to include only words that appear more than once.
 # -----------------------------------------------
 word_frequencies2 = {word: tokens.count(word) for word in tokens if tokens.count(word)>1}
-print(word_frequencies2)
+#print(word_frequencies2)
 
 
 
@@ -95,7 +103,8 @@ print(word_frequencies2)
 # Your code here:
 # -----------------------------------------------
 def token_counts(string: str, k: int = 1) -> dict:
-    return {word: tokens.count(word) for word in string if tokens.count(word) >= k}
+    stringg = tokenize(string)
+    return {word: stringg.count(word) for word in stringg if stringg.count(word) >= k}
 
 
 # test:
@@ -127,10 +136,10 @@ all(text_hist[key] == value for key, value in token_counts(text).items())
 
 # Your code here:
 # -----------------------------------------------
-token_to_id = {token: idx for idx, token in enumerate(tokens)}
+token_to_id = {token: idx for idx, token in enumerate(tokenize(text, unique=True))}
 
 # Expected output: {'dog': 0, 'quick': 1, 'fox': 2, 'the': 3, 'over': 4, 'lazy': 5, 'brown': 6, 'jumps': 7}
-print(token_to_id)
+#print(token_to_id)
 # -----------------------------------------------
 
 
@@ -142,13 +151,13 @@ print(token_to_id)
 id_to_token = {idx: token for token, idx in token_to_id.items()}
 
 # tests: 
-# test 1
+# # # test 1
 assert id_to_token[token_to_id['dog']] == 'dog'
-# test 2
+# # # test 2
 assert token_to_id[id_to_token[4]] == 4
-# test 3
-#assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(token_to_id[id_to_token[k]]==k for k in range(len(token_to_id)))
-# -----------------------------------------------
+# # # test 3
+assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(token_to_id[id_to_token[k]]==k for k in range(len(token_to_id)))
+# # -----------------------------------------------
 
 
 
@@ -290,124 +299,124 @@ np.all(sigmoid(np.log([1, 1/3, 1/7])) == np.array([1/2, 1/4, 1/8]))
 
 # Task 10: Translate this function into Python (by hand!)
 
-# Your code here:
-# -----------------------------------------------
-def rnn_layer(w: np.array, list_of_sequences: list[np.array], sigma=sigmoid ) -> np.array:
-    pass # Your code
+# # Your code here:
+# # -----------------------------------------------
+# def rnn_layer(w: np.array, list_of_sequences: list[np.array], sigma=sigmoid ) -> np.array:
+#     pass # Your code
 
-# Test
-np.random.seed(10)
-list_of_sequences = [np.random.normal(size=(5,3)) for _ in range(100)]
-wstart = np.random.normal(size=(3*3 + 3*3 + 3)) 
-o = rnn_layer(wstart, list_of_sequences)
-o.shape == (100,) and o.mean().round(3) == 16.287 and o.std().astype(int) == 133
-# -----------------------------------------------
-
-
-
-
-# [F] Defining a loss function
-# Objective: define the least squares loss function suitable for minimizing with scipy.optimize.minimize
-
-# We want to predict the target value y from each of the sequences using our RNN. We'll do
-# that with the minimize function from the scipy.optimize module. But we'll need to implement
-# a loss function.
-
-# In R the loss function may look as follows:
-#
-# rnn_loss = function(w, list_of_sequences, y) {
-# 	pred = rnn_layer(w, list_of_sequences)
-# 	sum((y-pred)^2)
-# }
+# # Test
+# np.random.seed(10)
+# list_of_sequences = [np.random.normal(size=(5,3)) for _ in range(100)]
+# wstart = np.random.normal(size=(3*3 + 3*3 + 3)) 
+# o = rnn_layer(wstart, list_of_sequences)
+# o.shape == (100,) and o.mean().round(3) == 16.287 and o.std().astype(int) == 133
+# # -----------------------------------------------
 
 
 
 
-# Task 11: translate the above loss function into Python
+# # [F] Defining a loss function
+# # Objective: define the least squares loss function suitable for minimizing with scipy.optimize.minimize
 
-# Your code here:
-# def rnn_loss(w: np.array, w, list_of_sequences: list[np.array], y: np.array) -> np.float64:
-# -----------------------------------------------
-def rnn_loss(w: np.array, list_of_sequences: list[np.array], y: np.array) -> np.float64:
-    pass # Your code
+# # We want to predict the target value y from each of the sequences using our RNN. We'll do
+# # that with the minimize function from the scipy.optimize module. But we'll need to implement
+# # a loss function.
 
-# Test:
-y = np.array([(X @ np.arange(1,4))[0] for X in list_of_sequences])
-o = rnn_loss(wstart, list_of_sequences, y)
-o.size == 1 and o.round(3) == 17794.733
-# -----------------------------------------------
-
-
+# # In R the loss function may look as follows:
+# #
+# # rnn_loss = function(w, list_of_sequences, y) {
+# # 	pred = rnn_layer(w, list_of_sequences)
+# # 	sum((y-pred)^2)
+# # }
 
 
-# [G] Fitting the RNN with minimize for the scipy.optmize module
-# Objective: fit your RNN on real data
 
-# The data that we will fit is a macroeconomics data set. We'll try to predict inflation ('infl')
-# from the consumer price index ('cpi') and unemployment rate ('unemp').
-# First, load the data set:
-from statsmodels.datasets import macrodata
 
-data = macrodata.load_pandas().data
-X = np.hstack([np.ones((len(data),1)), data[['cpi','unemp']].values]) # Features: CPI and unemployment
-y = data['infl'].values # Target: inflation
+# # Task 11: translate the above loss function into Python
 
-# Next we want to prepare a dataset for training sequence-based models like RNNs. We create 
-# input-output pairs where each input is a sequence of seq_len time steps from X, and the output 
-# is the corresponding target value y at the next time step after the sequence.
+# # Your code here:
+# # def rnn_loss(w: np.array, w, list_of_sequences: list[np.array], y: np.array) -> np.float64:
+# # -----------------------------------------------
+# def rnn_loss(w: np.array, list_of_sequences: list[np.array], y: np.array) -> np.float64:
+#     pass # Your code
 
-seq_len = 7 # Define the length of each input sequence (we choose 7 consecutive time steps).
+# # Test:
+# y = np.array([(X @ np.arange(1,4))[0] for X in list_of_sequences])
+# o = rnn_loss(wstart, list_of_sequences, y)
+# o.size == 1 and o.round(3) == 17794.733
+# # -----------------------------------------------
 
-# Create a list of tuples:
-data_pairs = [(X[i:i+seq_len], y[i+seq_len]) for i in range(len(X)-seq_len)]
-# - First element: a slice of `X` of length `seq_len` (the input sequence).
-# - Second element: the target value `y` corresponding to the step after the sequence.
-# Example: If seq_len=4, for i=0, pair is (X[0:4], y[4]).
 
-# We need the input sequences and target values in a separate list. A trick to do this is this:
 
-list_of_sequences, yy = list(zip(*data_pairs))
 
-# Here, the zip(*...) is used for transposing a list of tuples. It splits the tuple pairs into 
-# two separate lists:
-# First list: all input sequences (X[i:i+seq_len])
-# Second list: all target values (y[i+seq_len])
-# The * operator in Python unpacks the list elements into separate arguments for the zip() 
-# function. E.g., func(*[2,4,5]) is the same as func(2,4,5). 
+# # [G] Fitting the RNN with minimize for the scipy.optmize module
+# # Objective: fit your RNN on real data
 
-# Now we are ready to fit the RNN to the data set. We need to load the optimization routine 
-# 'minimize' from the scipy.optimize module
+# # The data that we will fit is a macroeconomics data set. We'll try to predict inflation ('infl')
+# # from the consumer price index ('cpi') and unemployment rate ('unemp').
+# # First, load the data set:
+# from statsmodels.datasets import macrodata
 
-from scipy.optimize import minimize
+# data = macrodata.load_pandas().data
+# X = np.hstack([np.ones((len(data),1)), data[['cpi','unemp']].values]) # Features: CPI and unemployment
+# y = data['infl'].values # Target: inflation
+
+# # Next we want to prepare a dataset for training sequence-based models like RNNs. We create 
+# # input-output pairs where each input is a sequence of seq_len time steps from X, and the output 
+# # is the corresponding target value y at the next time step after the sequence.
+
+# seq_len = 7 # Define the length of each input sequence (we choose 7 consecutive time steps).
+
+# # Create a list of tuples:
+# data_pairs = [(X[i:i+seq_len], y[i+seq_len]) for i in range(len(X)-seq_len)]
+# # - First element: a slice of `X` of length `seq_len` (the input sequence).
+# # - Second element: the target value `y` corresponding to the step after the sequence.
+# # Example: If seq_len=4, for i=0, pair is (X[0:4], y[4]).
+
+# # We need the input sequences and target values in a separate list. A trick to do this is this:
+
+# list_of_sequences, yy = list(zip(*data_pairs))
+
+# # Here, the zip(*...) is used for transposing a list of tuples. It splits the tuple pairs into 
+# # two separate lists:
+# # First list: all input sequences (X[i:i+seq_len])
+# # Second list: all target values (y[i+seq_len])
+# # The * operator in Python unpacks the list elements into separate arguments for the zip() 
+# # function. E.g., func(*[2,4,5]) is the same as func(2,4,5). 
+
+# # Now we are ready to fit the RNN to the data set. We need to load the optimization routine 
+# # 'minimize' from the scipy.optimize module
+
+# from scipy.optimize import minimize
 
 # fit the RNN (this may take a minute)
-fit = minimize(rnn_loss, wstart, args=(list_of_sequences, yy), method='BFGS')
-print(fit)
+# fit = minimize(rnn_loss, wstart, args=(list_of_sequences, yy), method='BFGS')
+# print(fit)
 
-# The 'success' component in fit may be false, and this is due to a loss of computational 
-# precision. For now we'll just settle for the weights it has found so far. 
+# # The 'success' component in fit may be false, and this is due to a loss of computational 
+# # precision. For now we'll just settle for the weights it has found so far. 
 
-# To evaluate the fit we can compute the correlation between the values predicted by the
-# RNN and the true values
-pred = rnn_layer(fit['x'], list_of_sequences)
-np.corrcoef(pred,yy)
+# # To evaluate the fit we can compute the correlation between the values predicted by the
+# # RNN and the true values
+# pred = rnn_layer(fit['x'], list_of_sequences)
+# np.corrcoef(pred,yy)
 
 # How good is this? To gage the performance of the RNN we'll compare it to a linear 
 # regression with the same data
-Z = X[:len(yy)] # features corresponding to elements in yy at the previous time step
-linreg_coefs = np.linalg.lstsq(Z, yy, rcond=None)[0] # rcond=None suppresses warning message
-linreg_pred = Z @ linreg_coefs
-np.corrcoef(linreg_pred, yy)
+# Z = X[:len(yy)] # features corresponding to elements in yy at the previous time step
+# linreg_coefs = np.linalg.lstsq(Z, yy, rcond=None)[0] # rcond=None suppresses warning message
+# linreg_pred = Z @ linreg_coefs
+# np.corrcoef(linreg_pred, yy)
 
 # The correlation of the RNN predicted values is substantially higher! But it also has
 # many more parameters, and so is more flexible. 
 
 # To visualize the difference in performance we plot the true values and predicted values
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-plt.plot(yy)
-plt.plot(pred)
-plt.plot(linreg_pred)
-plt.legend(['Truth','RNN','LinReg'])
+# plt.plot(yy)
+# plt.plot(pred)
+# plt.plot(linreg_pred)
+# plt.legend(['Truth','RNN','LinReg'])
 
 
